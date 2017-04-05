@@ -5,7 +5,9 @@ This is a Singularity spec file that can be used to build a container and run on
 You can either:  
 
 1. Copy the built singularity image from Discovery, located at /ihome/ejolly
-2. Build/modify the container from scratch
+2. Pull the container from [Singularity-Hub](https://singularity-hub.org/) `
+singularity pull shub://cosanlab/cosanToolsSingularity:master`
+3. Build/modify the container from scratch
 
 ### Building a container from scratch with this repo
 You'll need a local machine with sudo privileges and singularity installed. If you're running OSX you can follow the directions [here](http://singularity.lbl.gov/install-mac) to get a vagrant VM running to do this. Then proceed with:
