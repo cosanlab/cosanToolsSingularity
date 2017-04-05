@@ -48,7 +48,7 @@ From: ejolly/cosantoolsdocker
     echo "Updating pip...\n"
     pip install --upgrade pip
     echo "Updating conda packages...\n"
-    conda update --all
+    conda update -y --all
 
     echo "All done!\n"
      
