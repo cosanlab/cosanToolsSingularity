@@ -49,6 +49,7 @@ From: ubuntu:xenial-20161213
 	export PATH="/opt/conda/bin:$PATH"
 	export PYTHONPATH=/usr/local/lib/python2.7/site-packages
 	conda install -y gcc
+	conda update -y --all
 
 	# Set the appropriate Matplotlib backend by specifying an rc file and setting the environment variable to search for it
     mkdir /opt/matplotlib
@@ -81,7 +82,7 @@ From: ubuntu:xenial-20161213
 	########################################
 
 	pip install \
-	    hypertools nibabel dask mne pynv nipype
+	    hypertools nibabel nipy dask mne pynv nipype
     pip install git+https://github.com/ejolly/nltools
     pip install git+https://github.com/cosanlab/cosanlab_preproc
 
