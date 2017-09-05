@@ -2,53 +2,113 @@
 #MAINTAINER ESHIN JOLLY <eshin.jolly.gr@dartmouth.edu>
 
 Bootstrap: docker
-From: ejolly/cosantoolsdocker
+From: ubuntu:xenial-20161213
 
-%runscript
-	
-    echo "Now inside Singularity container woah..."
-    /bin/bash
+%labels
+	Maintainer eshin.jolly.gr@dartmouth.edu
 
 %post
-	
-	echo "Environment setup...\n"
-    
-    # Make life a little easier with vim
-    echo "Installing vim...\n"
-    apt-get --assume-yes install vim
+	# Install required system packages
+	apt-get update --fix-missing && apt-get install -y eatmydata
+	eatmydata apt-get install -y wget bzip2 ca-certificates \
+	    libglib2.0-0 libxext6 libsm6 libxrender1 libfreetype6-dev \
+	    git \
+	    mercurial \
+	    subversion \
+	    curl grep sed \
+	    dpkg \
+	    graphviz \
+	    vim nano \
+	    libgl1-mesa-glx \
+	    ffmpeg \
+	    fonts-liberation \
+	    build-essential \
+	    gcc \
+	    pkg-config \
+	    ca-certificates \
+	    xvfb \
+	    autoconf \
+	    libtool
 
-    # Make folders necessary for proper Discovery file system overlay
-    echo "Configuring folders for Discovery...\n"
-    mkdir -p /afs /inbox /ihome /opt
-    chmod a+rX /afs /inbox /ihome /opt
-    chmod a+rX -R /opt
-    
-    # Add ANTS and conda to PATH by editing Singularity environment file
-    echo "Adding ANTS and conda to PATH...\n"
-    sed -i '2iPATH=/opt/conda/bin:/opt/ants:$PATH' /environment
-    sed -i '3iexport ANTSPATH=/opt/ants' /environment
+	# Add Neurodebian package repositories (i.e. for FSL)
+	curl -sSL http://neuro.debian.net/lists/trusty.us-nh.full >> /etc/apt/sources.list.d/neurodebian.sources.list && \
+	    apt-key adv --recv-keys --keyserver hkp://pgp.mit.edu:80 0xA5D32F012649A5A9 && \
+	    apt-get update
 
-    # Ensure conda is the supreme python leader (aka takes precedence in module search)
-    sed -i '4iexport PYTHONPATH=/opt/conda/lib/python2.7/site-packages' /environment
+	#######################
+	### Setup Anaconda ####
+	#######################
 
-    # Set the appropriate Matplotlib backend by specifying an rc file and setting the environment variable to search for it
-    echo "Setting matplotlib backend...\n"
+	# Download and install
+	echo 'export PATH=/opt/conda/bin:$PATH' > /etc/profile.d/conda.sh && \
+	    wget --quiet https://repo.continuum.io/archive/Anaconda2-4.4.0-Linux-x86_64.sh -O ~/anaconda.sh && \
+	    /bin/bash ~/anaconda.sh -b -p /opt/conda && \
+	    rm ~/anaconda.sh
+
+	# Setup path
+	export PATH="/opt/conda/bin:$PATH"
+	export PYTHONPATH=/usr/local/lib/python2.7/site-packages
+	conda install -y gcc
+
+	# Set the appropriate Matplotlib backend by specifying an rc file and setting the environment variable to search for it
     mkdir /opt/matplotlib
     echo "backend: Agg" > /opt/matplotlib/matplotlibrc
-    sed -i '5iexport MATPLOTLIBRC=/opt/matplotlib' /environment
-   
-    # Do the same for FSL
-    echo "Adding FSL to PATH...\n"
-    sed -i '5r /etc/fsl/fsl.sh' /environment
+	export MATPLOTLIBRC=/opt/matplotlib
 
-    # Source environment
-    . /environment
+	###################
+	### Setup ANTS ####
+	###################
 
-    # Ensure most recent versions of pip, conda, and all packages
-    echo "Updating pip...\n"
-    pip install --upgrade pip
-    echo "Updating conda packages...\n"
-    conda update -y --all
+	# Download and install (NeuroDocker build)
+	export ANTSPATH="/usr/lib/ants"
+	mkdir -p $ANTSPATH && \
+	    curl -sSL "https://dl.dropbox.com/s/2f4sui1z6lcgyek/ANTs-Linux-centos5_x86_64-v2.2.0-0740f91.tar.gz" \
+	    | tar -xzC $ANTSPATH --strip-components 1
 
-    echo "All done!\n"
-     
+	# Setup path
+	export PATH=$ANTSPATH:$PATH
+
+	#################
+	## Setup FSL ####
+	#################
+
+	# Install
+	apt-get install -y fsl-core && \
+	    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+	########################################
+	## Setup Additional Python packages ####
+	########################################
+
+	pip install \
+	    hypertools nibabel dask mne pynv nipype
+    pip install git+https://github.com/ejolly/nltools
+    pip install git+https://github.com/cosanlab/cosanlab_preproc
+
+	#############################################################
+	## Setup for Discovery cluster file system overlay issue ####
+	#############################################################
+
+	# Make folders necessary for proper Discovery file system overlay
+    mkdir -p /afs /inbox /ihome /opt /idata /environment
+    chmod a+rX /afs /inbox /ihome /opt /idata /environment
+    chmod a+rwX -R /opt
+
+%environment
+	export PATH=/opt/conda/bin:$PATH
+	export ANTSPATH=/opt/ants
+	export PYTHONPATH=/opt/conda/lib/python2.7/site-packages
+	export MATPLOTLIBRC=/opt/matplotlib
+	export FSLDIR=/usr/share/fsl/5.0
+	export FSLOUTPUTTYPE=NIFTI_GZ
+	export PATH=/usr/lib/fsl/5.0:$PATH
+	export FSLMULTIFILEQUIT=TRUE
+	export POSSUMDIR=/usr/share/fsl/5.0
+	export LD_LIBRARY_PATH=/usr/lib/fsl/5.0:$LD_LIBRARY_PATH
+	export FSLTCLSH=/usr/bin/tclsh
+	export FSLWISH=/usr/bin/wish
+	export FSLOUTPUTTYPE=NIFTI_GZ
+
+%runscript
+	    echo "YOUR ARE THE SINGULARITY...."
+	    /bin/bash
