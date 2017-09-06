@@ -97,7 +97,8 @@ From: ubuntu:xenial-20161213
 
 %environment
 	export PATH=/opt/conda/bin:$PATH
-	export ANTSPATH=/opt/ants
+	export ANTSPATH=/usr/lib/ants
+	export PATH=/usr/lib/ants:$PATH
 	export PYTHONPATH=/opt/conda/lib/python2.7/site-packages
 	export MATPLOTLIBRC=/opt/matplotlib
 	export FSLDIR=/usr/share/fsl/5.0
@@ -109,6 +110,8 @@ From: ubuntu:xenial-20161213
 	export FSLTCLSH=/usr/bin/tclsh
 	export FSLWISH=/usr/bin/wish
 	export FSLOUTPUTTYPE=NIFTI_GZ
+	export LANG=C.UTF-8
+	export LC_ALL=C.UTF-8
 
 %runscript
 	    echo "YOUR ARE THE SINGULARITY...."
