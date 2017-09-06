@@ -98,6 +98,7 @@ From: ubuntu:xenial-20161213
 %environment
 	export PATH=/opt/conda/bin:$PATH
 	export ANTSPATH=/usr/lib/ants
+	export PATH=$ANTSPATH:$PATH
 	export PYTHONPATH=/opt/conda/lib/python2.7/site-packages
 	export MATPLOTLIBRC=/opt/matplotlib
 	export FSLDIR=/usr/share/fsl/5.0
