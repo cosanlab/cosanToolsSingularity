@@ -41,14 +41,15 @@ From: ubuntu:xenial-20161213
 
 	# Download and install
 	echo 'export PATH=/opt/conda/bin:$PATH' > /etc/profile.d/conda.sh && \
-	    wget --quiet https://repo.continuum.io/archive/Anaconda2-4.4.0-Linux-x86_64.sh -O ~/anaconda.sh && \
+	    wget --quiet https://repo.continuum.io/archive/Anaconda3-5.0.1-Linux-x86_64.sh -O ~/anaconda.sh && \
 	    /bin/bash ~/anaconda.sh -b -p /opt/conda && \
 	    rm ~/anaconda.sh
 
-	# Setup path
+	# Setup path for further installs below
 	export PATH="/opt/conda/bin:$PATH"
-	export PYTHONPATH=/usr/local/lib/python2.7/site-packages
-	conda install -y gcc
+
+	# Conda > 5.0.0 uses 3 new compiler packages vs old single 'gcc'
+	conda install -y gcc_linux-64 gxx_linux-64 gfortran_linux-64
 	conda update -y --all
 
 	# Set the appropriate Matplotlib backend by specifying an rc file and setting the environment variable to search for it
@@ -82,8 +83,7 @@ From: ubuntu:xenial-20161213
 	########################################
 
 	pip install \
-	    hypertools nibabel nipy dask mne pynv nipype
-    pip install git+https://github.com/ejolly/nltools
+	    hypertools nibabel nipy dask mne pynv nipype nltools
     pip install git+https://github.com/cosanlab/cosanlab_preproc
 
 	#############################################################
@@ -114,5 +114,5 @@ From: ubuntu:xenial-20161213
 	export LC_ALL=C.UTF-8
 
 %runscript
-	    echo "YOUR ARE THE SINGULARITY...."
+	    echo "YOU are the singularity...."
 	    /bin/bash
