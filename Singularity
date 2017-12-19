@@ -62,7 +62,7 @@ From: ubuntu:xenial-20161213
 	###################
 
 	# Download and install (NeuroDocker build)
-	export ANTSPATH="/opt/ants"
+	ANTSPATH="/usr/lib/ants"
 	mkdir -p $ANTSPATH && \
 	    curl -sSL "https://dl.dropbox.com/s/2f4sui1z6lcgyek/ANTs-Linux-centos5_x86_64-v2.2.0-0740f91.tar.gz" \
 	    | tar -xzC $ANTSPATH --strip-components 1
@@ -97,8 +97,8 @@ From: ubuntu:xenial-20161213
 
 %environment
 	export PATH=/opt/conda/bin:$PATH
-	export PATH=/opt/ants:$PATH
-	export ANTSPATH=/opt/ants
+	export PATH=/usr/lib/ants:$PATH
+	export ANTSPATH=/usr/lib/ants
 	export PYTHONPATH=/opt/conda/lib/python2.7/site-packages
 	export MATPLOTLIBRC=/opt/matplotlib
 	export FSLDIR=/usr/share/fsl/5.0
