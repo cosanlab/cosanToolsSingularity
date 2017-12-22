@@ -39,11 +39,9 @@ From: ubuntu:xenial-20161213
 	### Setup Anaconda ####
 	#######################
 
-	# Download and install
-	echo 'export PATH=/opt/conda/bin:$PATH' > /etc/profile.d/conda.sh && \
-	    wget --quiet https://repo.continuum.io/archive/Anaconda3-5.0.1-Linux-x86_64.sh -O ~/anaconda.sh && \
-	    /bin/bash ~/anaconda.sh -b -p /opt/conda && \
-	    rm ~/anaconda.sh
+	wget https://repo.continuum.io/archive/Anaconda3-5.0.1-Linux-x86_64.sh -O ~/anaconda.sh && \
+	/bin/bash ~/anaconda.sh -b -p /opt/conda && \
+	rm ~/anaconda.sh
 
 	# Setup path for further installs below
 	export PATH="/opt/conda/bin:$PATH"
@@ -53,9 +51,13 @@ From: ubuntu:xenial-20161213
 	conda update -y --all
 
 	# Set the appropriate Matplotlib backend by specifying an rc file and setting the environment variable to search for it
-    mkdir /opt/matplotlib
-    echo "backend: Agg" > /opt/matplotlib/matplotlibrc
-	export MATPLOTLIBRC=/opt/matplotlib
+	mkdir /opt/matplotlib
+	echo "backend: Agg" > /opt/matplotlib/matplotlibrc
+
+	# We're going to setup up a conda environment via the host rather than in the spec file to make editing package data easy without requiring root
+	# Make shared folder for that purpose at append that to the *beginning* of the PATH in the environment variable section
+	mkdir -p /container_pkgs
+	chmod a+rwX -R /container_pkgs
 
 	###################
 	### Setup ANTS ####
@@ -78,14 +80,6 @@ From: ubuntu:xenial-20161213
 	apt-get install -y fsl-core && \
 	    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-	########################################
-	## Setup Additional Python packages ####
-	########################################
-
-	pip install \
-	    hypertools nibabel nipy dask mne pynv nipype nltools
-    pip install git+https://github.com/cosanlab/cosanlab_preproc
-
 	#############################################################
 	## Setup for Discovery cluster file system overlay issue ####
 	#############################################################
@@ -96,10 +90,8 @@ From: ubuntu:xenial-20161213
     chmod a+rwX -R /opt
 
 %environment
-	export PATH=/opt/conda/bin:$PATH
 	export PATH=/usr/lib/ants:$PATH
 	export ANTSPATH=/usr/lib/ants
-	export PYTHONPATH=/opt/conda/lib/python2.7/site-packages
 	export MATPLOTLIBRC=/opt/matplotlib
 	export FSLDIR=/usr/share/fsl/5.0
 	export FSLOUTPUTTYPE=NIFTI_GZ
@@ -112,6 +104,8 @@ From: ubuntu:xenial-20161213
 	export FSLOUTPUTTYPE=NIFTI_GZ
 	export LANG=C.UTF-8
 	export LC_ALL=C.UTF-8
+	export PATH=/opt/conda/bin:$PATH
+	export PATH=/container_pkgs/bin:$PATH
 
 %runscript
 	    echo "YOU are the singularity...."
