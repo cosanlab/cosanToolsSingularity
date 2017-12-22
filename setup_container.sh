@@ -17,4 +17,3 @@ source activate /container_pkgs
 
 # Install additional packages using pip
 pip install hypertools nipy mne nipype nltools
-pip install git+https://github.com/cosanlab/cosanlab_preproc
