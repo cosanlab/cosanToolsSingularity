@@ -16,4 +16,5 @@ conda create -p /container_pkgs --clone root
 source activate /container_pkgs
 
 # Install additional packages using pip
-pip install hypertools nipy mne nipype nltools
+pip install hypertools nipy mne nipype nltools datalad
+pip install datalad[full]

@@ -35,6 +35,9 @@ From: ubuntu:xenial-20161213
 	    apt-key adv --recv-keys --keyserver hkp://pgp.mit.edu:80 0xA5D32F012649A5A9 && \
 	    apt-get update
 
+	# Datalad dependency
+	eatmydata apt-get install git-annex-standalone
+
 	#######################
 	### Setup Anaconda ####
 	#######################
@@ -77,7 +80,7 @@ From: ubuntu:xenial-20161213
 	#################
 
 	# Install
-	apt-get install -y fsl-core && \
+	eatmydata apt-get install -y fsl-core && \
 	    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 	#############################################################
@@ -85,8 +88,8 @@ From: ubuntu:xenial-20161213
 	#############################################################
 
 	# Make folders necessary for proper Discovery file system overlay
-    mkdir -p /afs /inbox /ihome /opt /idata /environment
-    chmod a+rX /afs /inbox /ihome /opt /idata /environment
+    mkdir -p /afs /inbox /ihome /opt /idata /environment /dartfs /dartfs-hpc /data /srv /scratch
+    chmod a+rX /afs /inbox /ihome /opt /idata /environment /dartfs /dartfs-hpc /data /srv /scratch
     chmod a+rwX -R /opt
 
 %environment
