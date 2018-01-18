@@ -1,20 +1,16 @@
 #!/bin/bash
 
-# This script uses the premade container (with Anaconda installed) to create a conda virtual environment that exists *outside* the container in a folder shared with the host OS and sets that to the default conda environment by editing the PATH
+# Run via
+# singularity exec --writable -B /Volumes/CONDA/container_pkgs/:/container_pkgs cosanTools.img /container_pkgs/setup_container.sh
 
-# This makes it easy for the user to install and modify conda/pip packages in a read-only container, by utilizing this shared folder /container_pkgs
+# 1) Download Anaconda and install it in an volume external to the container
+wget https://repo.continuum.io/archive/Anaconda3-5.0.1-Linux-x86_64.sh -O ~/anaconda.sh && \
+/bin/bash ~/anaconda.sh -b -p /container_pkgs/conda && \
+rm ~/anaconda.sh
 
-# First make sure the host OS has a folder called container_pkgs at the same location as the container image
-# mkdir container_pkgs
-
-# Second place this script within that folder
-
-# Then run this script with the container using:
-# singularity exec --writable -B ./container_pkgs/:/container_pkgs cosanTools.img /container_pkgs/setup_container.sh
-
-conda create -p /container_pkgs --clone root
-source activate /container_pkgs
+# Conda > 5.0.0 uses 3 new compiler packages vs old single 'gcc'
+conda install -y gcc_linux-64 gxx_linux-64 gfortran_linux-64
+conda update pandas
 
 # Install additional packages using pip
-pip install hypertools nipy mne nipype nltools datalad
-pip install datalad[full]
+pip install hypertools nipy mne nipype nltools datalad[full]

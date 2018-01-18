@@ -42,25 +42,21 @@ From: ubuntu:xenial-20161213
 	### Setup Anaconda ####
 	#######################
 
-	wget https://repo.continuum.io/archive/Anaconda3-5.0.1-Linux-x86_64.sh -O ~/anaconda.sh && \
-	/bin/bash ~/anaconda.sh -b -p /opt/conda && \
-	rm ~/anaconda.sh
+	# Because we want a writable conda environment we're going to install it using the setup_container.sh script which should be run after the container is built
 
-	# Setup path for further installs below
-	export PATH="/opt/conda/bin:$PATH"
+	# Here we're just going to create the required folders within the container and set the PATH properly
+	mkdir -p /container_pkgs
+	chmod a+rwX -R /container_pkgs
 
-	# Conda > 5.0.0 uses 3 new compiler packages vs old single 'gcc'
-	conda install -y gcc_linux-64 gxx_linux-64 gfortran_linux-64
-	conda update -y --all
+    # Create a condarc file to handle where environments are installed by default
+	echo "envs_dirs:" > ~/.condarc
+    echo "  - /container_pkgs/conda/envs" >> ~/.condarc
+
 
 	# Set the appropriate Matplotlib backend by specifying an rc file and setting the environment variable to search for it
 	mkdir /opt/matplotlib
 	echo "backend: Agg" > /opt/matplotlib/matplotlibrc
 
-	# We're going to setup up a conda environment via the host rather than in the spec file to make editing package data easy without requiring root
-	# Make shared folder for that purpose at append that to the *beginning* of the PATH in the environment variable section
-	mkdir -p /container_pkgs
-	chmod a+rwX -R /container_pkgs
 
 	###################
 	### Setup ANTS ####
@@ -107,8 +103,7 @@ From: ubuntu:xenial-20161213
 	export FSLOUTPUTTYPE=NIFTI_GZ
 	export LANG=C.UTF-8
 	export LC_ALL=C.UTF-8
-	export PATH=/opt/conda/bin:$PATH
-	export PATH=/container_pkgs/bin:$PATH
+	export PATH=/container_pkgs/conda:$PATH
 
 %runscript
 	    echo "YOU are the singularity...."
