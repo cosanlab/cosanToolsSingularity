@@ -106,5 +106,24 @@ From: ubuntu:xenial-20161213
 	export PATH=/container_pkgs/conda:$PATH
 
 %runscript
-	    echo "YOU are the singularity...."
-	    /bin/bash
+	echo "Entering container..."
+	echo "Checking if you exist..."
+	if conda env list | grep -q `whoami`; then
+	source activate `whoami`
+	clear
+	echo "Started your environment...do cool science!"
+	/bin/bash
+	else
+	echo "You weren't found."
+	read -p "Create conda environment for you? (y/n) "
+	echo
+	if [[ $REPLY =~ ^[Yy]$ ]]; then
+			echo "Creating new environment (this may take a few min)"
+			conda create -y -n `whoami` --clone base
+			source activate `whoami`
+			/bin/bash
+	else
+			echo "Goodbye (please create an environment to use this container)"
+			exit 1
+	 fi
+	fi

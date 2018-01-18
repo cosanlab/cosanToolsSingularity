@@ -4,6 +4,8 @@ This is a Singularity spec file that can be used to build a container and run on
 
 This container has been built a bit **differently** than the container on the the [main branch](https://github.com/cosanlab/cosanToolsSingularity/tree/master). Specifically its conda-based python environment is *editable* despite the container being read-only.
 
+During startup the container will auto-check if the current user evaluated through `whoami` has an existing `conda` environment within the container. If not they will be given the option to have one created for them, otherwise they will not be permitted to use the container. If a user already has an existing environment, the container auto-boots into that environment. This ensures multiple people can utilize this container without conflicting python installs.
+
 Location on Dartmouth's discovery cluster: `/dartfs/rc/lab/D/DBIC/cosanlab/Resources/cosanTools`
 
 ## Using the container on Discovery  
@@ -12,12 +14,10 @@ After ssh-ing to Discovery here's how you launch the container:
 
 1. Navigate to the folder mentioned above
 2. Type `module load singularity`
-3. Run this following script: `./run_container` or `bash run_container`
-4. Create your own environment **you only need to do this once** the very first time you ever use the container: `conda create -n yourName --clone root`
-4. Once you're inside the container you should **use your own environment**: `source activate ejolly`
-5. Quit the container with ctrl+D
+3. Use the runscript in that folder: `./run_container` or `bash run_container`
+4. Quit the container with ctrl+D
 
-## Things to note
+## Things to note if not using the runscript
 1. Make sure to ALWAYS run this container with the container_pkgs folder mounted
     - This means call `singularity run` or `singularity exec` with `-B path/to/container_pkgs:/container_pkgs`. Otherwise you won't be able to use Python/conda
     - This goes for developing the container on your Mac as well (see below): `singularity run -B /Volumes/CONDA/container_pkgs:/container_pkgs cosanTools.img`
