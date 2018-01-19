@@ -27,15 +27,11 @@ After ssh-ing to Discovery here's how you launch the container:
 (*assumes Singularity 2.3 and Mac OS*)  
 1) You need to install a Vagrant virtual machine since it's not possible to install singularity on Mac OS. Follow the directions [here](http://singularity.lbl.gov/install-mac)
 2) Add the following line to your `Vagrantfile` for the vagrant vm you're going to use to build the container: `config.vm.synced_folder "/Volumes/CONDA", "/vagrant_data"`
-3) Create a new case-sensitive disk image that we're going to install conda into. This is required because Mac OS by default uses case-insensitive file-systems and the conda linux installer [doesn't like this](https://github.com/conda/conda/issues/6603).  
- Open Disk Utility. Go to: File > New Image > Blank Image
-    1) Save as:
-        - file name: conda_file_system
-        - Name: CONDA
-        - Size: 10,000MB
-        - Format: OSX Extended (Case-Sensitive, Journaled)
-    2) **If on OSX 10.11 (El Capitan)**: erase this and reformat as OSX Extended (Case-Sensitive, Journaled), due to this [bug](https://discussions.apple.com/thread/7395900)
-- *Optionally use the `disk_maker.sh` program included in this repo instead of step 3*
+3) Create a new case-sensitive disk image that we're going to install conda into. This is required because Mac OS by default uses case-insensitive file-systems and the conda linux installer [doesn't like this](https://github.com/conda/conda/issues/6603). Use the `disk_maker.sh` program in this folder to do that.   
+    1) `./disk_maker create`
+    2) `./disk_maker mount`, then enter your password
+    3) You should now have a volume mounted at `/Volumes/CONDA`, it may or may not show up in Mac OS's Finder, so don't worry about that; just confirm using your terminal.
+    - *You can also use Mac OS's Disk Utility to achieve the same thing following the directions at the end of this section*\*
 4) Launch your vagrant vm: `vagrant up && vagrant ssh`
 5) cd to `/vagrant` which is shared with your host OS
 6) Create an empty singularity container: `sudo singularity create --size 8000 cosanTools.img`
@@ -44,3 +40,11 @@ After ssh-ing to Discovery here's how you launch the container:
 9) Copy the setup script in this repo to that folder: `mv setup_container.sh /Volumes/CONDA/container_pkgs/`
 10) Run the container with the setup script: `singularity exec --writable -B /Volumnes/CONDA/container_pkgs/:/container_pkgs cosanTools.img /container_pkgs/setup_container.sh`
 11) You should be all set!
+
+*\*Creating a case-sensitive file system using Mac OS's Disk Utility*  
+1) Open Disk Utility. Go to: File > New Image > Blank Image > Save as
+   - file name: conda_file_system
+   - Name: CONDA
+   - Size: 10,000MB
+   - Format: OSX Extended (Case-Sensitive, Journaled)
+2) **If on OSX 10.11 (El Capitan)**: erase this and reformat as OSX Extended (Case-Sensitive, Journaled), due to this [bug](https://discussions.apple.com/thread/7395900)

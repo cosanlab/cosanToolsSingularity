@@ -6,9 +6,9 @@
 # ---------------------------------------------------------
 
 MOUNT_POINT="${CASE_SAFE_MOUNT_POINT:-/Volumes/CONDA}"
-VOLUME_PATH="${CASE_SAFE_VOLUME_PATH:-${HOME}/Desktop/conda_file_system.dmg.sparseimage}"
+VOLUME_PATH="${CASE_SAFE_VOLUME_PATH:-${PWD}/conda_file_system.dmg.sparseimage}"
 VOLUME_NAME="${CASE_SAFE_VOLUME_NAME:-CONDA}"
-VOLUME_SIZE="${CASE_SAFE_VOLUME_SIZE:-1g}"
+VOLUME_SIZE="${CASE_SAFE_VOLUME_SIZE:-1000g}"
 
 # ---------------------------------------------------------
 # Functionality

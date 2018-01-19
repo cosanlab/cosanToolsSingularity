@@ -14,3 +14,6 @@ conda update pandas
 
 # Install additional packages using pip
 pip install hypertools nipy mne nipype nltools datalad[full]
+
+# Free up some space
+conda clean --tarballs

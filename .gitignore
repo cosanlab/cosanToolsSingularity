@@ -3,3 +3,4 @@
 container_pkgs/*
 *.dmg
 *.tar.gz
+*.sparseimage
