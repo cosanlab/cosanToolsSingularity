@@ -36,7 +36,7 @@ From: ubuntu:xenial-20161213
 	    apt-get update
 
 	# Datalad dependency
-	eatmydata apt-get install git-annex-standalone
+	eatmydata apt-get install -y datalad
 
 	#######################
 	### Setup Anaconda ####
