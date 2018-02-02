@@ -110,24 +110,31 @@ if [ ! -z "$1" ] && [ $1 = 'root' ]; then
 	echo "Entering container as conda root"
 	/bin/bash
 else
-	echo "Entering container..."
-	echo "Checking if you exist..."
+	if [ $# -eq 0 ]; then
+		echo "Entering container..."
+		echo "Checking if you exist..."
+	fi
 	if conda env list | grep -q `whoami`; then
         	source activate `whoami`
-		clear
-		echo "Started your environment...do cool science!"
-		/bin/bash
+			if [ $# -eq 0 ]; then
+				clear
+				echo "Started your environment...do cool science!"
+				/bin/bash
+			else
+				exec "$@"
+			fi
 	else
-        	echo "You weren't found."
+        	echo "You weren't found. Need to perform one-time setup."
         	read -p "Create conda environment for you? (y/n) "
         	echo
         	if [[ $REPLY =~ ^[Yy]$ ]]; then
-                	echo "Creating new environment (this may take a few min)"
-			conda create -y -n `whoami` --clone root
-			source activate `whoami`
-                	/bin/bash
+                echo "Creating new environment (this may take a few min)"
+				conda create -y -n `whoami` --clone root
+				source activate `whoami`
+				echo "New environment created successfully and auto-activated."
+                /bin/bash
         	else
-                	echo "Goodbye (please create an environment to use this container)"
+                echo "Goodbye (you need an environment to use this container)"
 			exit 1
          	fi
 	fi
