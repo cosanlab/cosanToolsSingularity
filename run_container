@@ -1,0 +1,14 @@
+#!/bin/bash
+ME=`whoami`
+MYDIR="${ME: -1}"
+module load singularity/2.4.2
+singularity run \
+	-c \
+	-e \
+	-B /dartfs/rc/lab/D/DBIC/cosanlab/datax/Resources/cosantools/container_pkgs:/container_pkgs \
+	-B /dartfs:/dartfs \
+	-B /idata:/idata \
+	-B /scratch:/tmp \
+	-B /scratch:/var \
+	-B /dartfs-hpc/rc/home/$MYDIR/$ME:/dartfs-hpc/rc/home/$MYDIR/$ME \
+	/dartfs/rc/lab/D/DBIC/cosanlab/datax/Resources/cosantools/cosanTools.img "$@"
